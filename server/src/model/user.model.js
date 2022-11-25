@@ -9,16 +9,16 @@ class UserModel {
         if (resolve) {
           if (result[0] === undefined) {
             resolve({
-              status: "OK",
-              code: 200,
-              data: [{ message: "사용 가능한 이름입니다." }],
+              status: 200,
+              message: "중복되지 않은 회원입니다.",
+              data: { available: true },
             });
           } else {
             resolve({
               //No Content
-              status: "No Content",
-              code: 204,
-              data: [{ message: "중복된 이름입니다." }],
+              status: 204,
+              message: "중복된 이름입니다.",
+              data: { available: false },
             });
           }
         } else reject(err);
@@ -30,6 +30,7 @@ class UserModel {
   static getAccessToken(token) {
     return new Promise((resolve, reject) => {
       const query = `SELECT accesstoken FROM User WHERE accesstoken=?`;
+      console.log(token);
       db.query(query, [token], (err, result) => {
         if (err) reject(err);
         resolve(result[0]);
@@ -47,19 +48,25 @@ class UserModel {
         [
           request.nickname,
           request.profileimageurl,
-          request.accesstoken,
+          request.socialtoken,
           request.platform,
         ],
         (err) => {
-          //console.log(request);
           if (err) reject(err);
-          resolve({
-            status: "Created",
-            code: 201,
-            data: [{ message: "회원가입 완료" }],
-          });
+          else resolve();
         }
       );
+    });
+  }
+
+  //회원가입 즉시 userid 반환하기 위함
+  static getUserIDMax() {
+    return new Promise((resolve, reject) => {
+      const query = "SELECT MAX(userid) FROM User";
+      db.query(query, (err, result) => {
+        if (resolve) resolve(result[0]);
+        else reject(err);
+      });
     });
   }
 
@@ -70,8 +77,7 @@ class UserModel {
       db.query(query, [userid], (err, result) => {
         if (resolve) {
           resolve({
-            status: "OK",
-            code: 200,
+            status: 200,
             message: "해당 유저가 존재합니다.",
           });
         } else reject(err);
@@ -86,8 +92,7 @@ class UserModel {
       db.query(query, [request.userid, request.fcmtoken], (err) => {
         if (err) reject;
         resolve({
-          status: "Created",
-          code: 201,
+          status: 201,
           message: "fcmtoken 푸시 완료",
         });
       });
@@ -101,11 +106,49 @@ class UserModel {
       db.query(query, [request.minion, request.userid], (err) => {
         if (resolve) {
           resolve({
-            status: "OK",
-            code: 200,
+            status: 200,
             message: "캐릭터 선택을 완료했습니다.",
+            data: null,
           });
         } else reject(err);
+      });
+    });
+  }
+
+  //minion을 도감에 추가
+  static pushMinion(userid, minionid) {
+    return new Promise((resolve, reject) => {
+      const query = `INSERT INTO Minion(userid, minionid) VALUES(?,?)`;
+      db.query(query, [userid, minionid], (err) => {
+        if (resolve)
+          resolve({
+            status: 201,
+            message: "캐릭터 도감 추가 완료",
+            data: null,
+          });
+        else reject(err);
+      });
+    });
+  }
+
+  //현재 내 minion이 뭔지 가져오기
+  static getMinion(userid) {
+    return new Promise((resolve, reject) => {
+      const query = `SELECT minion FROM User WHERE userid=?`;
+      db.query(query, [userid], (err, result) => {
+        if (resolve) resolve(result[0]);
+        else reject(err);
+      });
+    });
+  }
+
+  //선택한 minion이 열려있는지 확인
+  static isOpenMinion(request) {
+    return new Promise((resolve, reject) => {
+      const query = `SELECT onlock FROM Minion WHERE userid=? AND minionid=?`;
+      db.query(query, [request.userid, request.minionid], (err, result) => {
+        if (resolve) resolve(result[0]);
+        else reject(err);
       });
     });
   }
@@ -123,11 +166,10 @@ class UserModel {
   }
 
   //유저의 프로필에 보여지는 정보를 DB에서 가져오기
-  static getUserInfo(request) {
+  static getUserInfo(userid) {
     return new Promise((resolve, reject) => {
-      const query =
-        "SELECT profilename,profileimage,friendcount,minioncount FROM User WHERE userid=?";
-      db.query(query, [request.userid], (err, result) => {
+      const query = "SELECT profilename,profileimage FROM User WHERE userid=?";
+      db.query(query, [userid], (err, result) => {
         if (resolve) {
           resolve(result[0]);
         } else reject(err);

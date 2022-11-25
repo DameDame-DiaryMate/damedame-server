@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const userCtrl = require("../controller/user.controller");
 const diaryCtrl = require("../controller/diary.controller");
+const minionCtrl = require("../controller/minion.controller");
 
 /**
  * auth
@@ -13,12 +14,18 @@ router.post("/v1/auth/sign-up", userCtrl.post.register); //OK
 /**
  * user
  */
-router.put("/v1/user/minion", userCtrl.put.choiceminion); //TODO: DB Table 수정 후 손봐야 함.
-router.get("/v1/user/home/:userid", userCtrl.get.home); //TODO: DB Table 수정 후 손봐야 함.
-router.get("/v1/user/profile/:userid", userCtrl.get.userinfo); //TODO: API 쪼개기 대상.
+router.put("/v1/user/minion", userCtrl.put.choiceminion); //OK
+router.get("/v1/user/home/:userid", userCtrl.get.home); //OK
+router.get("/v1/user/profile/:userid", userCtrl.get.userinfo); //OK
 router.get("/v1/user/friend/:userid/:page", userCtrl.get.friendinfo); //TODO: DB Table 수정 후 손봐야 함.
 router.get("/v1/user/setting/:userid", userCtrl.get.setting); //OK
-router.get("/v1/user/notification/:userid", userCtrl.get.notice); //TODO: API 쪼개기 + DB 수정.
+//router.get("/v1/user/notification/:userid", userCtrl.get.notice); //TODO: API 쪼개기 + DB 수정.
+
+/**
+ * minion
+ */
+router.get("/v1/minion/home/:userid/:minionid", minionCtrl.get.home); //OK
+router.get("/v1/minion/profile/:userid", minionCtrl.get.minioninfo); //OK
 
 /**
  * diary

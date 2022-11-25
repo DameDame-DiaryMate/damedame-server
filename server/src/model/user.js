@@ -1,5 +1,4 @@
 const UserModel = require("./user.model");
-const DiaryModel = require("./diary.model");
 
 class User {
   constructor(body) {
@@ -19,7 +18,28 @@ class User {
   async register() {
     try {
       const response = await UserModel.pushUserInfo(this.body);
-      return response;
+      const getId = parseInt(
+        Object.values(
+          JSON.parse(JSON.stringify(await UserModel.getUserIDMax()))
+        )[0]
+      );
+
+      //처음 회원가입을 하면 자동으로 캐릭터1을 도감에 추가한다.
+      const getMinion = parseInt(
+        Object.values(
+          JSON.parse(JSON.stringify(await UserModel.getMinion(getId)))
+        )[0]
+      );
+      const pushMinion = await UserModel.pushMinion(getId, getMinion);
+      //console.log(getId, getMinion);
+
+      if (response === undefined) {
+        return {
+          status: 201,
+          message: "회원가입 완료",
+          data: { userid: getId },
+        };
+      }
     } catch (err) {
       console.error(err);
     }
@@ -34,42 +54,27 @@ class User {
         //console.log(checkAccessToken);
         if (checkAccessToken === undefined) {
           return {
-            status: "Created",
-            code: 201,
-            data: [
-              {
-                jwttoken: "asdf",
-              },
-              {
-                isnewuser: false,
-              },
-              {
-                message: "신규 유저입니다.",
-              },
-            ],
+            status: 200,
+            message: "신규 유저입니다.",
+            data: {
+              jwttoken: "asdf",
+              isnewuser: true,
+            },
           };
         } else {
           return {
-            status: "OK",
-            code: 200,
-            data: [
-              {
-                jwttoken: "asdf",
-              },
-              {
-                isnewuser: false,
-              },
-              {
-                message: "기존에 가입된 유저입니다.",
-              },
-            ],
+            status: 200,
+            message: "기존에 가입된 유저입니다.",
+            data: {
+              jwttoken: "asdf",
+              isnewuser: false,
+            },
           };
         }
       } else {
         return {
-          status: "Not Found",
-          code: 404,
-          data: [{ message: "찾을 수 없습니다." }],
+          status: 404,
+          message: "찾을 수 없습니다.",
         };
       }
     } catch (err) {
@@ -77,9 +82,19 @@ class User {
     }
   }
 
-  async choice() {
+  async choiceminion() {
     try {
-      const response = await UserModel.selectMinion(this.body);
+      const isOK = await UserModel.isOpenMinion(this.body);
+      let response;
+      if (isOK === undefined) {
+        response = {
+          status: 200,
+          message: "고를 수 없는 캐릭터",
+          data: null,
+        };
+      } else {
+        response = await UserModel.selectMinion(this.body);
+      }
       return response;
     } catch (err) {
       console.error(err);
@@ -88,7 +103,10 @@ class User {
 
   async home() {
     try {
-      const response = await UserModel.getHome(this.body);
+      const response = JSON.parse(
+        JSON.stringify(await UserModel.getHome(this.body))
+      );
+      console.log(response);
       return response;
     } catch (err) {
       console.error(err);
@@ -97,38 +115,13 @@ class User {
 
   async userInfo() {
     try {
-      const respInfo = JSON.parse(
+      const resp = JSON.parse(
         JSON.stringify(await UserModel.getUserInfo(this.body))
       );
-
-      const diaryNum = await DiaryModel.getDiaryId(this.body.userid);
-      console.log(diaryNum);
-      const diaryNum2 = [];
-      for (let i = 0; i < Object.keys(diaryNum).length; i++) {
-        //diaryNum2.push(Object.values(diaryNum)[i].diaryid);
-        //console.log(Object.values(diaryNum)[i].diaryid);
-      }
-      //console.log(diaryNum2);
-
-      const diaryInfoArr = [];
-      for (let i = 0; i < diaryNum2.length; i++) {
-        diaryInfoArr.push(
-          JSON.parse(JSON.stringify(await DiaryModel.getMyDiarys(diaryNum2[i])))
-        );
-      }
-      //console.log(diaryInfoArr);
-
-      return {
-        status: "OK",
-        code: 200,
-        profilename: respInfo.profilename,
-        profileimage: respInfo.profileimage,
-        friendcount: respInfo.friendcount,
-        minioncount: respInfo.minioncount,
-        diary: diaryInfoArr,
-      };
+      console.log(resp);
+      return resp;
     } catch (err) {
-      //console.error(err);
+      console.error(err);
     }
   }
 

@@ -18,12 +18,9 @@ db.connect((err) => {
 
   let createTableUser = `CREATE TABLE IF NOT EXISTS User(
     userid int auto_increment primary key,
-    profilename varchar(50) not null,
-    profileimage varchar(500),
+    nickname varchar(50) not null,
+    profileimageurl varchar(500),
     minion int not null default 1,
-    friendcount int not null default 0,
-    minioncount int not null default 0,
-    minionexp double not null default 0,
     notice boolean not null default false,
     accesstoken varchar(500) not null,
     platform varchar(50) not null
@@ -49,14 +46,6 @@ db.connect((err) => {
         foreign key(userid) references User(userid) on update cascade on delete cascade
     ) DEFAULT CHARACTER SET UTF8;`;
 
-  // let createTableUserToDiary = `CREATE TABLE IF NOT EXISTS UserToDiary(
-  //       userid int not null,
-  //       diaryid int not null,
-  //       primary key(userid, diaryid),
-  //       foreign key(userid) references User(userid) on update cascade on delete cascade,
-  //       foreign key(diaryid) references Diary(diaryid) on update cascade on delete cascade
-  //   ) DEFAULT CHARACTER SET UTF8;`;
-
   let createTableFriend = `CREATE TABLE IF NOT EXISTS Friend(
         friendid int not null,
         userid int not null,
@@ -64,19 +53,12 @@ db.connect((err) => {
         foreign key(userid) references User(userid) on update cascade on delete cascade
     ) DEFAULT CHARACTER SET UTF8;`;
 
-  let createTableMinionBook = `CREATE TABLE IF NOT EXISTS MinionBook(
-        minion int not null,
+  let createTableMinion = `CREATE TABLE IF NOT EXISTS Minion(
+        minionid int not null,
         userid int not null,
-        m1 boolean not null,
-        m2 boolean not null,
-        m3 boolean not null,
-        m4 boolean not null,
-        m5 boolean not null,
-        m6 boolean not null,
-        m7 boolean not null,
-        m8 boolean not null,
-        m9 boolean not null,
-        primary key(userid, minion),
+        onlock boolean not null default true,
+        exp double not null default 0.0,
+        primary key(userid, minionid),
         foreign key(userid) references User(userid) on update cascade on delete cascade
     ) DEFAULT CHARACTER SET UTF8;`;
 
@@ -91,14 +73,6 @@ db.connect((err) => {
         foreign key(userid) references User(userid) on update cascade on delete cascade
     ) DEFAULT CHARACTER SET UTF8;`;
 
-  // let createTableUserToNotice = `CREATE TABLE IF NOT EXISTS UserToNotice(
-  //       userid int not null,
-  //       noticeid int not null,
-  //       primary key(userid, noticeid),
-  //       foreign key(userid) references User(userid) on update cascade on delete cascade,
-  //       foreign key(noticeid) references Notification(noticeid) on update cascade on delete cascade
-  //   ) DEFAULT CHARACTER SET UTF8;`;
-
   db.query(createTableUser, (err, result) => {
     if (err) throw err;
   });
@@ -108,21 +82,15 @@ db.connect((err) => {
   db.query(createTableDiary, (err, result) => {
     if (err) throw err;
   });
-  // db.query(createTableUserToDiary, (err, result) => {
-  //   if (err) throw err;
-  // });
   db.query(createTableFriend, (err, result) => {
     if (err) throw err;
   });
-  db.query(createTableMinionBook, (err, result) => {
+  db.query(createTableMinion, (err, result) => {
     if (err) throw err;
   });
   db.query(createTableNotification, (err, result) => {
     if (err) throw err;
   });
-  // db.query(createTableUserToNotice, (err, result) => {
-  //   if (err) throw err;
-  // });
 });
 
 module.exports = db;
