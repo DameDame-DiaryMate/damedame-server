@@ -42,13 +42,13 @@ class UserModel {
   static pushUserInfo(request) {
     return new Promise((resolve, reject) => {
       const query =
-        "INSERT INTO User(nickname,profileimageurl,accesstoken,platform) VALUES(?,?,?,?)";
+        "INSERT INTO User(nickName,profileImageurl,accessToken,platform) VALUES(?,?,?,?)";
       db.query(
         query,
         [
-          request.nickname,
-          request.profileimageurl,
-          request.socialtoken,
+          request.nickName,
+          request.profileImageurl,
+          request.socialToken,
           request.platform,
         ],
         (err) => {
@@ -103,7 +103,7 @@ class UserModel {
   static selectMinion(request) {
     return new Promise((resolve, reject) => {
       const query = "UPDATE User SET minion=? WHERE userid=?";
-      db.query(query, [request.minion, request.userid], (err) => {
+      db.query(query, [request.minionId, request.userId], (err) => {
         if (resolve) {
           resolve({
             status: 200,
@@ -132,21 +132,10 @@ class UserModel {
   }
 
   //현재 내 minion이 뭔지 가져오기
-  static getMinion(userid) {
+  static getMinion(userId) {
     return new Promise((resolve, reject) => {
       const query = `SELECT minion FROM User WHERE userid=?`;
-      db.query(query, [userid], (err, result) => {
-        if (resolve) resolve(result[0]);
-        else reject(err);
-      });
-    });
-  }
-
-  //선택한 minion이 열려있는지 확인
-  static isOpenMinion(request) {
-    return new Promise((resolve, reject) => {
-      const query = `SELECT onlock FROM Minion WHERE userid=? AND minionid=?`;
-      db.query(query, [request.userid, request.minionid], (err, result) => {
+      db.query(query, [userId], (err, result) => {
         if (resolve) resolve(result[0]);
         else reject(err);
       });
@@ -154,10 +143,10 @@ class UserModel {
   }
 
   //홈화면에 필요한 캐릭터정보와 알림 온오프 값 DB에서 받아오기
-  static getHome(userid) {
+  static getHome(userId) {
     return new Promise((resolve, reject) => {
-      const query = "SELECT minion, minionexp, notice FROM User WHERE userid=?";
-      db.query(query, [userid], (err, result) => {
+      const query = "SELECT minion, notice FROM User WHERE userId=?";
+      db.query(query, [userId], (err, result) => {
         if (resolve) {
           resolve(result[0]);
         } else reject(err);
@@ -166,12 +155,13 @@ class UserModel {
   }
 
   //유저의 프로필에 보여지는 정보를 DB에서 가져오기
-  static getUserInfo(userid) {
+  static getUserInfo(userId) {
     return new Promise((resolve, reject) => {
-      const query = "SELECT profilename,profileimage FROM User WHERE userid=?";
-      db.query(query, [userid], (err, result) => {
+      const query =
+        "SELECT userId,nickname,profileimageurl,createdAt FROM User WHERE userId=?";
+      db.query(query, [userId], (err, result) => {
         if (resolve) {
-          resolve(result[0]);
+          resolve(result);
         } else reject(err);
       });
     });
@@ -189,19 +179,26 @@ class UserModel {
   }
 
   //유저의 친구 목록을 조회하기
-  static getFriendInfo(request) {
+  static getFriendInfo(userId, size, page) {
     return new Promise((resolve, reject) => {
-      const query =
-        "SELECT friendid FROM Friend WHERE userid=? limit 6 OFFSET ?";
-      db.query(
-        query,
-        [request.userid, (request.page - 1) * 6],
-        (err, result) => {
-          if (resolve) {
-            resolve(result);
-          } else reject(err);
-        }
-      );
+      const query = `SELECT friendId FROM Friend WHERE userId=? LIMIT ${size} OFFSET ?`;
+      db.query(query, [userId, (page - 1) * size], (err, result) => {
+        if (resolve) {
+          resolve(result);
+        } else reject(err);
+      });
+    });
+  }
+
+  //유저의 친구 수를 가져오기
+  static getFriendCount(userId) {
+    return new Promise((resolve, reject) => {
+      const query = `SELECT COUNT(*) FROM Friend WHERE userId=?`;
+      db.query(query, [userId], (err, result) => {
+        if (resolve) {
+          resolve(result[0]);
+        } else reject(err);
+      });
     });
   }
 

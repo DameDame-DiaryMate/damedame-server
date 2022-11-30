@@ -1,4 +1,6 @@
 const UserModel = require("./user.model");
+const MinionModel = require("./minion.model");
+const DiaryModel = require("./diary.model");
 
 class User {
   constructor(body) {
@@ -84,7 +86,10 @@ class User {
 
   async choiceminion() {
     try {
-      const isOK = await UserModel.isOpenMinion(this.body);
+      const isOK = await MinionModel.isUnLockMinion(
+        this.body.userId,
+        this.body.minionId
+      );
       let response;
       if (isOK === undefined) {
         response = {
@@ -101,13 +106,38 @@ class User {
     }
   }
 
+  async pushMinion() {
+    try {
+      //console.log(this.body);
+      const response = await MinionModel.pushMinion(this.body);
+      return response;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   async home() {
     try {
       const response = JSON.parse(
         JSON.stringify(await UserModel.getHome(this.body))
       );
-      console.log(response);
-      return response;
+
+      const exp = JSON.parse(
+        JSON.stringify(
+          await MinionModel.getHomeInfo(this.body, response.minion)
+        )
+      );
+      if (exp !== undefined) {
+        return {
+          status: 200,
+          code: "OK",
+          data: {
+            minion: response.minion,
+            notice: response.notice,
+            exp: exp.exp,
+          },
+        };
+      }
     } catch (err) {
       console.error(err);
     }
@@ -115,11 +145,39 @@ class User {
 
   async userInfo() {
     try {
-      const resp = JSON.parse(
+      //닉네임, 프로필 사진 가져오기
+      const userResp = JSON.parse(
         JSON.stringify(await UserModel.getUserInfo(this.body))
+      )[0];
+
+      //도감수 가져오기
+      const minionCount = parseInt(
+        Object.values(
+          JSON.parse(
+            JSON.stringify(await MinionModel.getMinionCount(this.body))
+          )
+        )[0]
       );
-      console.log(resp);
-      return resp;
+
+      //일기수 가져오기
+
+      //친구수 가져오기
+      const friendCount = parseInt(
+        Object.values(
+          JSON.parse(JSON.stringify(await UserModel.getFriendCount(this.body)))
+        )[0]
+      );
+
+      return {
+        status: 200,
+        message: "OK",
+        data: {
+          nickName: userResp.nickname,
+          profileImageUrl: userResp.profileimageurl,
+          minionCount: minionCount,
+          friendCount: friendCount,
+        },
+      };
     } catch (err) {
       console.error(err);
     }
@@ -127,8 +185,51 @@ class User {
 
   async friendInfo() {
     try {
-      const response = await UserModel.getFriendInfo(this.body);
-      return response;
+      const userId = this.body.params.userId;
+      const size = this.body.query.size;
+      const page = parseInt(this.body.query.page);
+
+      const response = JSON.parse(
+        JSON.stringify(await UserModel.getFriendInfo(userId, size, page))
+      );
+      //console.log(response);
+
+      let friendInfos = [];
+      for (let i = 0; i < Object.values(response).length; i++) {
+        const friendId = Object.values(response[i])[0];
+        const friendInfo = JSON.parse(
+          JSON.stringify(await UserModel.getUserInfo(friendId))
+        )[0];
+        friendInfos.push(friendInfo);
+      }
+
+      let next, prev;
+      let max = Object.values(
+        JSON.parse(JSON.stringify(await UserModel.getFriendCount(userId)))
+      )[0];
+
+      if (page == 1) {
+        prev = null;
+      } else {
+        prev = page - 1;
+      }
+      if (page >= max / size) {
+        next = null;
+      } else {
+        next = page + 1;
+      }
+
+      return {
+        status: 200,
+        message: "OK",
+        data: {
+          info: {
+            next: next,
+            prev: prev,
+          },
+          result: friendInfos,
+        },
+      };
     } catch (err) {
       console.error(err);
     }
@@ -142,14 +243,14 @@ class User {
       console.log(response);
       if (response !== undefined) {
         return {
-          status: "OK",
-          code: 200,
+          status: 200,
+          message: "OK",
           data: [response, { message: "푸시 알람 정보" }],
         };
       } else {
         return {
-          status: "Not Found",
-          code: 404,
+          status: 404,
+          message: "NOT FOUND",
           data: [{ message: "알람 정보 못찾음" }],
         };
       }

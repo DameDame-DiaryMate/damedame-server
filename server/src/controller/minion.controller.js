@@ -1,6 +1,6 @@
 const Minion = require("../model/minion");
 
-const get = {
+const GET = {
   home: async (req, res) => {
     const minion = new Minion(req.params);
     const resp = await minion.getHome();
@@ -14,6 +14,6 @@ const get = {
   },
 };
 
-const post = {};
+const POST = {};
 
-module.exports = { get, post };
+module.exports = { GET, POST };

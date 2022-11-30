@@ -11,11 +11,7 @@ class Minion {
         JSON.stringify(await MinionModel.getHomeInfo(this.body))
       );
       if (resp !== undefined) {
-        return {
-          status: 200,
-          message: "홈 화면에 필요한 캐릭터 정보",
-          data: { resp },
-        };
+        return resp;
       }
     } catch (err) {
       console.error(err);
@@ -26,7 +22,9 @@ class Minion {
     try {
       const resp = parseInt(
         Object.values(
-          JSON.parse(JSON.stringify(await MinionModel.getMinionReps(this.body)))
+          JSON.parse(
+            JSON.stringify(await MinionModel.getMinionCount(this.body))
+          )
         )[0]
       );
       return {

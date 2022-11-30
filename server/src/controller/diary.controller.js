@@ -1,14 +1,19 @@
 const Diary = require("../model/diary");
 
-const get = {
+const GET = {
   diary: async (req, res) => {
     const diary = new Diary(req.params);
     const response = await diary.getDiary();
     return res.json(response);
   },
+  diaryarray: async (req, res) => {
+    const diary = new Diary(req);
+    const response = await diary.getArray();
+    return res.json(response);
+  },
 };
 
-const post = {
+const POST = {
   diary: async (req, res) => {
     const diary = new Diary(req.body);
     //console.log(req.body);
@@ -17,4 +22,4 @@ const post = {
   },
 };
 
-module.exports = { get, post };
+module.exports = { GET, POST };

@@ -7,31 +7,28 @@ const minionCtrl = require("../controller/minion.controller");
 /**
  * auth
  */
-router.put("/v1/auth/login", userCtrl.put.sociallogin); //OK
-router.get("/v1/auth/validate/:profilename", userCtrl.get.checkname); //OK
-router.post("/v1/auth/sign-up", userCtrl.post.register); //OK
+router.put("/v1/auth/login", userCtrl.PUT.sociallogin); //OK
+router.get("/v1/auth/validate/:nickName", userCtrl.GET.checkname); //OK
+router.post("/v1/auth/sign-up", userCtrl.POST.register); //OK
 
 /**
  * user
  */
-router.put("/v1/user/minion", userCtrl.put.choiceminion); //OK
-router.get("/v1/user/home/:userid", userCtrl.get.home); //OK
-router.get("/v1/user/profile/:userid", userCtrl.get.userinfo); //OK
-router.get("/v1/user/friend/:userid/:page", userCtrl.get.friendinfo); //TODO: DB Table 수정 후 손봐야 함.
-router.get("/v1/user/setting/:userid", userCtrl.get.setting); //OK
+router.put("/v1/user/minion", userCtrl.PUT.choiceminion); //OK
+router.post("/v1/user/minion", userCtrl.POST.pushminion);
+router.get("/v1/user/home/:userId", userCtrl.GET.home); //OK
+router.get("/v1/user/profile/:userId", userCtrl.GET.userinfo); //OK
+router.delete("/v1/user/profile/:userId", userCtrl.DELETE.friend); //TODO
+router.get("/v1/user/friend/:userId", userCtrl.GET.friendinfo); //OK
+router.get("/v1/user/setting/:userId", userCtrl.GET.setting); //OK
 //router.get("/v1/user/notification/:userid", userCtrl.get.notice); //TODO: API 쪼개기 + DB 수정.
-
-/**
- * minion
- */
-router.get("/v1/minion/home/:userid/:minionid", minionCtrl.get.home); //OK
-router.get("/v1/minion/profile/:userid", minionCtrl.get.minioninfo); //OK
 
 /**
  * diary
  */
-router.post("/v1/diary", diaryCtrl.post.diary); //TODO: 일기 작성시 minion exp 증가에 대한 resp 필요.
-router.get("/v1/diary/:userid/:diaryid", diaryCtrl.get.diary); //TODO: API 쪼개기 대상.
+router.post("/v1/diary", diaryCtrl.POST.diary); //OK
+router.get("/v1/diary/:userId/:diaryId", diaryCtrl.GET.diary); //OK
+router.get("/v1/diarys/profile/:userId", diaryCtrl.GET.diaryarray); //-> 왜  diary로 하면 적용이 안되는 것인지
 
 //TODO: 친구 검색, API 쪼개기 등의 API 추가적으로 필요.
 
