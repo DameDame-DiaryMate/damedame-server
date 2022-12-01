@@ -1,4 +1,4 @@
-const db = require("../config/db");
+const db = require("../../config/db");
 
 class MinionModel {
   //새로운 캐릭터 DB에 추가

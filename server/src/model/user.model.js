@@ -1,4 +1,4 @@
-const db = require("../config/db");
+const db = require("../../config/db");
 
 class UserModel {
   //회원가입 시 프로필이름 중복 여부 체크

@@ -1,4 +1,4 @@
-const db = require("../config/db");
+const db = require("../../config/db");
 
 class DiaryModel {
   //DB에 작성한 일기 push

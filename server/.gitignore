@@ -5,4 +5,4 @@
 
 .env
 
-/src/config/db.js
+/config
