@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const userCtrl = require("../controller/user.controller");
 const diaryCtrl = require("../controller/diary.controller");
-const minionCtrl = require("../controller/minion.controller");
 
 /**
  * auth
