@@ -1,6 +1,7 @@
 const UserModel = require("./user.model");
 const MinionModel = require("./minion.model");
 const DiaryModel = require("./diary.model");
+const jwt = require("../modules/jwt").normal;
 
 class User {
   constructor(body) {
@@ -35,11 +36,12 @@ class User {
       const pushMinion = await UserModel.pushMinion(getId, getMinion);
       //console.log(getId, getMinion);
 
+      const jwtToken = await jwt.sign(getId);
       if (response === undefined) {
         return {
           status: 201,
-          message: "회원가입 완료",
-          data: { userid: getId },
+          message: "Created",
+          data: { userid: getId, jwtToken: jwtToken },
         };
       }
     } catch (err) {
@@ -59,7 +61,6 @@ class User {
             status: 200,
             message: "신규 유저입니다.",
             data: {
-              jwttoken: "asdf",
               isnewuser: true,
             },
           };
@@ -68,7 +69,6 @@ class User {
             status: 200,
             message: "기존에 가입된 유저입니다.",
             data: {
-              jwttoken: "asdf",
               isnewuser: false,
             },
           };
