@@ -14,7 +14,9 @@ const normal = {
       token: jwt.sign(payLoad, secretKey, option),
       refreshToken: randToken.uid(256),
     };
-    return result;
+    return {
+      jwtToken: jwt.sign(payLoad, secretKey, option),
+    };
   },
   verify: async (token) => {
     let decoded;

@@ -42,7 +42,7 @@ class User {
         return {
           status: 201,
           message: "Created",
-          data: { userId: getId, jwtToken: jwtToken },
+          data: { userId: getId, jwtToken },
         };
       }
     } catch (err) {
