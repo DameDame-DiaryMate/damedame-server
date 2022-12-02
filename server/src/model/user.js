@@ -37,7 +37,7 @@ class User {
       //console.log(getId, getMinion);
 
       const jwtToken = await jwt.sign(getId);
-      console.log("getId: ", getId, ", jwt: ", jwtToken);
+      console.log(jwtToken);
       if (response === undefined) {
         return {
           status: 201,
@@ -161,6 +161,11 @@ class User {
       );
 
       //일기수 가져오기
+      const diaryCount = parseInt(
+        Object.values(
+          JSON.parse(JSON.stringify(await DiaryModel.getDiaryCount(this.body)))
+        )[0]
+      );
 
       //친구수 가져오기
       const friendCount = parseInt(
@@ -175,6 +180,7 @@ class User {
         data: {
           nickName: userResp.nickname,
           profileImageUrl: userResp.profileimageurl,
+          diaryCount: diaryCount,
           minionCount: minionCount,
           friendCount: friendCount,
         },

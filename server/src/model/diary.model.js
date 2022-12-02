@@ -72,6 +72,7 @@ class DiaryModel {
     });
   }
 
+  //유저가 쓴 일기 개수 가져오기
   static getDiaryCount(userId) {
     return new Promise((resolve, reject) => {
       const query = `SELECT COUNT(diaryId) FROM Diary WHERE userId=?`;
