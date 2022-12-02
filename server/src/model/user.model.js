@@ -214,10 +214,19 @@ class UserModel {
     });
   }
 
-  //유저에게 온 알림 목록 가져오기
-  static getNotice(userid) {
-    //TODO:
+  //검색한 이름이 포함된 유저 검색
+  static searchNickName(name) {
+    return new Promise((resolve, reject) => {
+      const query = `SELECT nickName,profileImageUrl FROM User WHERE nickName LIKE '%${name}%'`;
+      db.query(query, (err, result) => {
+        if (resolve) resolve(result);
+        else reject(err);
+      });
+    });
   }
+
+  //유저에게 온 알림 목록 가져오기
+  static getNotice(userid) {}
 }
 
 module.exports = UserModel;

@@ -33,13 +33,17 @@ const GET = {
     console.log("GET /setting Req");
     return res.json(response);
   },
-
-  //TODO: notice 테이블로 유저의 알림 목록 가져오기
-  //   notice: async (req, res) => {
-  //     const user = new User(req.params.userid);
-  //     const response = await user.notice();
-  //     return res.json(response);
-  //   },
+  search: async (req, res) => {
+    const user = new User(req.query.query);
+    const response = await user.search();
+    console.log("GET /search Req");
+    return res.json(response);
+  },
+  notice: async (req, res) => {
+    const user = new User(req.params.userid);
+    const response = await user.notice();
+    return res.json(response);
+  },
 };
 
 const POST = {

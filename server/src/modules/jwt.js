@@ -10,6 +10,7 @@ const normal = {
     const payLoad = {
       userId: id,
     };
+    //refreshToken부분, 혹시 몰라서 작성만 해놓음
     const result = {
       token: jwt.sign(payLoad, secretKey, option),
       refreshToken: randToken.uid(256),

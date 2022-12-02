@@ -37,12 +37,12 @@ class User {
       //console.log(getId, getMinion);
 
       const jwtToken = await jwt.sign(getId);
-      console.log(jwtToken);
+      console.log(jwtToken.jwtToken);
       if (response === undefined) {
         return {
           status: 201,
           message: "Created",
-          data: { userId: getId, jwtToken },
+          data: { userId: getId, jwtToken: jwtToken.jwtToken },
         };
       }
     } catch (err) {
@@ -234,7 +234,7 @@ class User {
             next: next,
             prev: prev,
           },
-          result: friendInfos,
+          results: friendInfos,
         },
       };
     } catch (err) {
@@ -261,6 +261,22 @@ class User {
           data: [{ message: "알람 정보 못찾음" }],
         };
       }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async search() {
+    try {
+      const response = JSON.parse(
+        JSON.stringify(await UserModel.searchNickName(this.body))
+      );
+
+      return {
+        status: 200,
+        message: "OK",
+        data: response,
+      };
     } catch (err) {
       console.error(err);
     }

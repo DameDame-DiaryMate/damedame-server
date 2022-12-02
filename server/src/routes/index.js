@@ -21,6 +21,7 @@ router.delete("/v1/user/profile/:userId", userCtrl.DELETE.friend); //TODO
 router.get("/v1/user/friend/:userId", userCtrl.GET.friendinfo); //OK
 router.get("/v1/user/setting/:userId", userCtrl.GET.setting); //OK
 //router.get("/v1/user/notification/:userid", userCtrl.get.notice); //TODO: API 쪼개기 + DB 수정.
+router.get("/v1/user/search", userCtrl.GET.search);
 
 /**
  * diary
