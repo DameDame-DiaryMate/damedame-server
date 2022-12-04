@@ -181,6 +181,7 @@ class User {
         status: 200,
         message: "OK",
         data: {
+          userId: userResp.userId,
           nickName: userResp.nickName,
           profileImageUrl: userResp.profileImageurl,
           diaryCount: diaryCount,
