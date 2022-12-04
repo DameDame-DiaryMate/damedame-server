@@ -60,6 +60,16 @@ class MinionModel {
     });
   }
 
+  static getMinionHome(userId) {
+    return new Promise((resolve, reject) => {
+      const query = `SELECT minionId FROM Minion WHERE userId=? AND onLock=false`;
+      db.query(query, [userId], (err, result) => {
+        if (resolve) resolve(result);
+        else reject(err);
+      });
+    });
+  }
+
   //일기 작성 후 증가된 exp를 DB에 반영
   static updateMinionExp(exp, userId, minionId) {
     return new Promise((resolve, reject) => {

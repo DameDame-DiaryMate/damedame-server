@@ -42,12 +42,12 @@ class UserModel {
   static pushUserInfo(request) {
     return new Promise((resolve, reject) => {
       const query =
-        "INSERT INTO User(nickName,profileImageurl,accessToken,platform) VALUES(?,?,?,?)";
+        "INSERT INTO User(nickName,profileImageUrl,accessToken,platform) VALUES(?,?,?,?)";
       db.query(
         query,
         [
           request.nickName,
-          request.profileImageurl,
+          request.profileImageUrl,
           request.socialToken,
           request.platform,
         ],

@@ -1,3 +1,4 @@
+const { commit } = require("../../config/db");
 const User = require("../model/user");
 
 const GET = {
@@ -42,6 +43,11 @@ const GET = {
   notice: async (req, res) => {
     const user = new User(req.params.userid);
     const response = await user.notice();
+    return res.json(response);
+  },
+  minionhome: async (req, res) => {
+    const user = new User(req.params.userId);
+    const response = await user.minionhome();
     return res.json(response);
   },
 };

@@ -181,7 +181,7 @@ class User {
         status: 200,
         message: "OK",
         data: {
-          nickName: userResp.nickname,
+          nickName: userResp.nickName,
           profileImageUrl: userResp.profileimageurl,
           diaryCount: diaryCount,
           minionCount: minionCount,
@@ -288,6 +288,15 @@ class User {
   async notice() {
     try {
       const response = await UserModel.getNotice(this.body);
+      return response;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async minionhome() {
+    try {
+      const response = await MinionModel.getMinionHome(this.body);
       return response;
     } catch (err) {
       console.error(err);
