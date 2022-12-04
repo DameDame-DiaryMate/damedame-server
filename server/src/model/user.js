@@ -182,7 +182,7 @@ class User {
         message: "OK",
         data: {
           nickName: userResp.nickName,
-          profileImageUrl: userResp.profileimageurl,
+          profileImageUrl: userResp.profileImageurl,
           diaryCount: diaryCount,
           minionCount: minionCount,
           friendCount: friendCount,
