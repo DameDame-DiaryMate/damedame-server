@@ -86,10 +86,10 @@ class UserModel {
   }
 
   //유저의 id와 fcmtoken을 DB에 푸시
-  static pushUserFCM(request) {
+  static pushUserFCM(userId, fcmToken) {
     return new Promise((resolve, reject) => {
-      const query = "INSERT INTO UserFCMToken(userid, fcmtoken) VALUES(?,?);";
-      db.query(query, [request.userid, request.fcmtoken], (err) => {
+      const query = "INSERT INTO UserFCMToken(userId, fcmToken) VALUES(?,?);";
+      db.query(query, [userId, fcmToken], (err) => {
         if (err) reject;
         resolve({
           status: 201,

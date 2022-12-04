@@ -27,6 +27,9 @@ class User {
         )[0]
       );
 
+      //회원가입과 동시에 userId에 맞는 fcmToken도 DB에 추가
+      const fcm = await UserModel.pushUserFCM(getId, this.body.fcmToken);
+
       //처음 회원가입을 하면 자동으로 캐릭터1을 도감에 추가한다.
       const getMinion = parseInt(
         Object.values(
