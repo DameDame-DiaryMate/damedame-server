@@ -158,7 +158,7 @@ class UserModel {
   static getUserInfo(userId) {
     return new Promise((resolve, reject) => {
       const query =
-        "SELECT userId,nickname,profileimageurl FROM User WHERE userId=?";
+        "SELECT userId,nickName,profileImageUrl FROM User WHERE userId=?";
       db.query(query, [userId], (err, result) => {
         if (resolve) {
           resolve(result);
