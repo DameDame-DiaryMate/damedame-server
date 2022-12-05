@@ -102,6 +102,10 @@ class User {
           data: null,
         };
       } else {
+        const unLockMinion = await MinionModel.unLockMinion(
+          this.body.userId,
+          this.body.minionId
+        );
         response = await UserModel.selectMinion(this.body);
       }
       return response;
